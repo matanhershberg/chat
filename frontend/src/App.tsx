@@ -30,8 +30,8 @@ function App() {
       }}
     >
       <List style={{ width: "100%" }}>
-        {messages.map((message, index) => (
-          <ListItem key={index}>
+        {messages.map((message) => (
+          <ListItem key={message}>
             <ListItemText primary={message} />
           </ListItem>
         ))}
