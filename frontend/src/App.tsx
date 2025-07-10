@@ -48,7 +48,12 @@ function App() {
           fullWidth
           style={{ marginBottom: "10px" }}
         />
-        <Button type="submit" variant="contained" color="primary">
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          disabled={!input.trim()}
+        >
           Send
         </Button>
       </form>
