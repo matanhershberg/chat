@@ -1,4 +1,5 @@
 import js from "@eslint/js";
+import prettier from "eslint-config-prettier";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import reactX from "eslint-plugin-react-x";
@@ -16,6 +17,7 @@ export default tseslint.config([
       reactHooks.configs["recommended-latest"],
       reactRefresh.configs.vite,
       reactX.configs["recommended-typescript"],
+      prettier,
     ],
     languageOptions: {
       ecmaVersion: 2020,
