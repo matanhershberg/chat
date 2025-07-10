@@ -10,7 +10,8 @@ function App() {
   const [messages, setMessages] = useState<string[]>([]);
   const [input, setInput] = useState<string>("");
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (event: React.FormEvent) => {
+    event.preventDefault(); // Prevents the default form submission behavior
     if (input.trim()) {
       setMessages([...messages, input]);
       setInput("");
@@ -35,17 +36,22 @@ function App() {
           </ListItem>
         ))}
       </List>
-      <TextField
-        label="Type a message"
-        variant="outlined"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        fullWidth
-        style={{ marginBottom: "10px" }}
-      />
-      <Button variant="contained" color="primary" onClick={handleSendMessage}>
-        Send
-      </Button>
+      <form
+        onSubmit={handleSendMessage}
+        style={{ width: "100%", display: "flex", flexDirection: "column" }}
+      >
+        <TextField
+          label="Type a message"
+          variant="outlined"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          fullWidth
+          style={{ marginBottom: "10px" }}
+        />
+        <Button type="submit" variant="contained" color="primary">
+          Send
+        </Button>
+      </form>
     </Container>
   );
 }
