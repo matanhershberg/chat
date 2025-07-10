@@ -13,14 +13,14 @@ function App() {
   const handleSendMessage = (event: React.FormEvent) => {
     event.preventDefault(); // Prevents the default form submission behavior
     if (input.trim()) {
-      setMessages([...messages, input]);
+      setMessages((messages) => [...messages, input]);
       setInput("");
     }
   };
 
   return (
     <Container
-      maxWidth="sm"
+      maxWidth="xl"
       style={{
         display: "flex",
         flexDirection: "column",
