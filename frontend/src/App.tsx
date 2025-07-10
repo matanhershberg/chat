@@ -11,7 +11,7 @@ function App() {
   const [input, setInput] = useState<string>("");
 
   const handleSendMessage = (event: React.FormEvent) => {
-    event.preventDefault(); // Prevents the default form submission behavior
+    event.preventDefault();
     if (input.trim()) {
       setMessages((messages) => [...messages, input]);
       setInput("");
@@ -24,39 +24,51 @@ function App() {
       style={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
+        height: "100vh",
+        padding: "16px",
       }}
     >
-      <List style={{ width: "100%" }}>
-        {messages.map((message) => (
-          <ListItem key={message}>
-            <ListItemText primary={message} />
-          </ListItem>
-        ))}
-      </List>
-      <form
-        onSubmit={handleSendMessage}
-        style={{ width: "100%", display: "flex", flexDirection: "column" }}
+      <div
+        style={{
+          flexGrow: 1,
+          overflowY: "auto",
+          marginBottom: "16px",
+        }}
       >
-        <TextField
-          label="Type a message"
-          variant="outlined"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          fullWidth
-          style={{ marginBottom: "10px" }}
-        />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          disabled={!input.trim()}
+        <List>
+          {messages.map((message) => (
+            <ListItem key={message}>
+              <ListItemText primary={message} />
+            </ListItem>
+          ))}
+        </List>
+      </div>
+      <div style={{ flexShrink: 0 }}>
+        <form
+          onSubmit={handleSendMessage}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
         >
-          Send
-        </Button>
-      </form>
+          <TextField
+            label="Type a message"
+            variant="outlined"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            fullWidth
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            disabled={!input.trim()}
+          >
+            Send
+          </Button>
+        </form>
+      </div>
     </Container>
   );
 }
