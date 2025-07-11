@@ -1,3 +1,4 @@
+import SendIcon from "@mui/icons-material/Send";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -22,7 +23,7 @@ const MessageInput = ({ onSendMessage }: MessageInputProps) => {
   return (
     <Box>
       <form onSubmit={handleSubmit}>
-        <Stack spacing={1}>
+        <Stack direction="row" spacing={1}>
           <TextField
             label="Type a message"
             variant="outlined"
@@ -36,7 +37,7 @@ const MessageInput = ({ onSendMessage }: MessageInputProps) => {
             color="primary"
             disabled={!input.trim()}
           >
-            Send
+            <SendIcon />
           </Button>
         </Stack>
       </form>
