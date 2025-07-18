@@ -1,13 +1,21 @@
 import Stack from "@mui/material/Stack";
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { messagesActions, type RootState } from "../store/store";
 import ChatFeed from "./ChatFeed";
 import MessageInput from "./MessageInput";
 
 const Chat = () => {
-  const [messages, setMessages] = useState<string[]>([]);
+  const dispatch = useDispatch();
+  const messages = useSelector((state: RootState) => state.messages.messages);
 
   const handleSendMessage = (message: string) => {
-    setMessages((messages) => [...messages, message]);
+    dispatch(
+      messagesActions.addMessage({
+        id: crypto.randomUUID(),
+        text: message,
+        timestamp: new Date().toISOString(),
+      }),
+    );
   };
 
   return (

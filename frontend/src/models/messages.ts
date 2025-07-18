@@ -1,7 +1,7 @@
 export interface Message {
-  id: number;
+  id: string;
   text: string;
-  timestamp: Date;
+  timestamp: string;
 }
 
 export interface MessageState {

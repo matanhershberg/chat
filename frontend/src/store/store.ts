@@ -1,17 +1,28 @@
-import { createStore } from "redux";
+import {
+  configureStore,
+  createSlice,
+  type PayloadAction,
+} from "@reduxjs/toolkit";
 import type { Message, MessageState } from "../models/messages";
 
-const messagesReducer = (
-  state: MessageState = { messages: [] },
-  action: { type: string; payload: Message },
-) => {
-  if (action.type === "ADD_MESSAGE") {
-    return { messages: [...state.messages, action.payload] };
-  }
+const messagesSlice = createSlice({
+  name: "messages",
+  initialState: { messages: [] } as MessageState,
+  reducers: {
+    addMessage: (state, action: PayloadAction<Message>) => {
+      state.messages.push(action.payload);
+    },
+  },
+});
 
-  throw new Error(`Unknown action type: ${action.type}`);
-};
+const store = configureStore({
+  reducer: {
+    messages: messagesSlice.reducer,
+  },
+});
 
-const store = createStore(messagesReducer);
+export const messagesActions = messagesSlice.actions;
 
 export default store;
+
+export type RootState = ReturnType<typeof store.getState>;
