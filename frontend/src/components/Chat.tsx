@@ -1,6 +1,7 @@
 import Stack from "@mui/material/Stack";
 import { useDispatch, useSelector } from "react-redux";
-import { messagesActions, type RootState } from "../store/store";
+import { messagesActions } from "../store/messages";
+import { type RootState } from "../store/store";
 import ChatFeed from "./ChatFeed";
 import MessageInput from "./MessageInput";
 
