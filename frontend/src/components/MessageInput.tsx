@@ -25,7 +25,7 @@ const MessageInput = ({ onSendMessage }: MessageInputProps) => {
       <form onSubmit={handleSubmit}>
         <Stack direction="row" spacing={1}>
           <TextField
-            label="Type a message"
+            placeholder="Message"
             variant="outlined"
             value={input}
             onChange={(e) => setInput(e.target.value)}
