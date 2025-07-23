@@ -14,10 +14,7 @@ const ChatFeed: React.FC<ChatFeedProps> = ({ messages }) => {
       <List>
         {messages.map((message) => (
           <ListItem key={message.id}>
-            <ListItemText
-              primary={message.text}
-              secondary={`${message.timestamp.toLocaleString()}`}
-            />
+            <ListItemText primary={message.text} />
           </ListItem>
         ))}
       </List>
