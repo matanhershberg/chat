@@ -1,22 +1,19 @@
 import Stack from "@mui/material/Stack";
-import { useDispatch, useSelector } from "react-redux";
-import { messagesActions } from "../store/messages";
+import { useSelector } from "react-redux";
 import { type RootState } from "../store/store";
+import websocket from "../websocket";
 import ChatFeed from "./ChatFeed";
 import MessageInput from "./MessageInput";
 
 const Chat = () => {
-  const dispatch = useDispatch();
   const messages = useSelector((state: RootState) => state.messages.messages);
 
   const handleSendMessage = (message: string) => {
-    dispatch(
-      messagesActions.addMessage({
-        id: crypto.randomUUID(),
-        text: message,
-        timestamp: new Date().toISOString(),
-      }),
-    );
+    websocket.emit({
+      id: crypto.randomUUID(),
+      text: message,
+      timestamp: new Date().toISOString(),
+    });
   };
 
   return (
