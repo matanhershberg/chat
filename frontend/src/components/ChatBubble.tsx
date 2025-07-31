@@ -4,16 +4,19 @@ import Typography from "@mui/material/Typography";
 import type { Message } from "../models/messages";
 
 interface ChatBubbleProps {
-  message: Message;
+  messages: Message[];
   isOwnMessage: boolean;
   showUsername?: boolean;
 }
 
 const ChatBubble: React.FC<ChatBubbleProps> = ({
-  message,
+  messages,
   isOwnMessage,
   showUsername = true,
 }) => {
+  const firstMessage = messages[0];
+  const lastMessage = messages[messages.length - 1];
+
   return (
     <Box
       sx={{
@@ -55,10 +58,20 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
                 letterSpacing: "0.5px",
               }}
             >
-              {message.username}
+              {firstMessage.username}
             </Typography>
           )}
-          <Typography variant="body2">{message.text}</Typography>
+          {messages.map((message, index) => (
+            <Typography
+              key={message.id}
+              variant="body2"
+              sx={{
+                mb: index < messages.length - 1 ? 1 : 0,
+              }}
+            >
+              {message.text}
+            </Typography>
+          ))}
         </Paper>
         <Typography
           variant="caption"
@@ -70,7 +83,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
             fontSize: "0.7rem",
           }}
         >
-          {new Date(message.timestamp).toLocaleTimeString([], {
+          {new Date(lastMessage.timestamp).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
           })}

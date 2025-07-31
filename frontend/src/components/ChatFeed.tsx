@@ -11,6 +11,36 @@ interface ChatFeedProps {
 const ChatFeed: React.FC<ChatFeedProps> = ({ messages }) => {
   const currentUser = useSelector((state: RootState) => state.user.name);
 
+  // Helper function to get hour:minute from timestamp
+  const getTimeKey = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return `${date.getHours()}:${date.getMinutes()}`;
+  };
+
+  // Group consecutive messages from the same user with the same hour:minute
+  const groupedMessages: Message[][] = [];
+
+  for (let i = 0; i < messages.length; i++) {
+    const currentMessage = messages[i];
+    const previousMessage = i > 0 ? messages[i - 1] : null;
+
+    // Start a new group if:
+    // 1. First message
+    // 2. Different user
+    // 3. Different hour:minute
+    if (
+      !previousMessage ||
+      previousMessage.username !== currentMessage.username ||
+      getTimeKey(previousMessage.timestamp) !==
+        getTimeKey(currentMessage.timestamp)
+    ) {
+      groupedMessages.push([currentMessage]);
+    } else {
+      // Add to the last group
+      groupedMessages[groupedMessages.length - 1].push(currentMessage);
+    }
+  }
+
   return (
     <Box
       flex={1}
@@ -22,17 +52,17 @@ const ChatFeed: React.FC<ChatFeedProps> = ({ messages }) => {
         gap: 1,
       }}
     >
-      {messages.map((message, index) => {
-        const isOwnMessage = message.username === currentUser;
-        const previousMessage = index > 0 ? messages[index - 1] : null;
-        const showUsername =
-          !isOwnMessage &&
-          (!previousMessage || previousMessage.username !== message.username);
+      {groupedMessages.map((messageGroup) => {
+        const firstMessage = messageGroup[0];
+        const isOwnMessage = firstMessage.username === currentUser;
+
+        // Show username for every bubble from other users
+        const showUsername = !isOwnMessage;
 
         return (
           <ChatBubble
-            key={message.id}
-            message={message}
+            key={firstMessage.id}
+            messages={messageGroup}
             isOwnMessage={isOwnMessage}
             showUsername={showUsername}
           />
