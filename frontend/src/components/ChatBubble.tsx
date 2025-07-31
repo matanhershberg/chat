@@ -37,8 +37,10 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
           elevation={1}
           sx={{
             p: 1.5,
-            backgroundColor: isOwnMessage ? "primary.main" : "grey.800",
-            color: isOwnMessage ? "primary.contrastText" : "text.primary",
+            background: isOwnMessage
+              ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+              : "linear-gradient(135deg, #374151 0%, #4b5563 100%)",
+            color: isOwnMessage ? "#ffffff" : "#e5e7eb",
             borderRadius: 2,
             borderTopLeftRadius: isOwnMessage ? 2 : 0.5,
             borderTopRightRadius: isOwnMessage ? 0.5 : 2,
