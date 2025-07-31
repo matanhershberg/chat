@@ -30,18 +30,6 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
           alignItems: isOwnMessage ? "flex-end" : "flex-start",
         }}
       >
-        {!isOwnMessage && showUsername && (
-          <Typography
-            variant="caption"
-            sx={{
-              color: "text.secondary",
-              mb: 0.5,
-              ml: 1,
-            }}
-          >
-            {message.username}
-          </Typography>
-        )}
         <Paper
           elevation={1}
           sx={{
@@ -54,6 +42,22 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
             wordBreak: "break-word",
           }}
         >
+          {!isOwnMessage && showUsername && (
+            <Typography
+              variant="caption"
+              sx={{
+                display: "block",
+                fontWeight: "bold",
+                color: isOwnMessage ? "primary.contrastText" : "info.light",
+                mb: 0.5,
+                pb: 0.5,
+                fontSize: "0.75rem",
+                letterSpacing: "0.5px",
+              }}
+            >
+              {message.username}
+            </Typography>
+          )}
           <Typography variant="body2">{message.text}</Typography>
         </Paper>
         <Typography
