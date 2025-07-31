@@ -7,11 +7,17 @@ import MessageInput from "./MessageInput";
 
 const Chat = () => {
   const messages = useSelector((state: RootState) => state.messages.messages);
+  const user = useSelector((state: RootState) => state.user);
 
   const handleSendMessage = (message: string) => {
+    if (user.name === undefined) {
+      throw new Error("User name is not set");
+    }
+
     websocket.emit({
       id: crypto.randomUUID(),
       text: message,
+      username: user.name,
       timestamp: new Date().toISOString(),
     });
   };
