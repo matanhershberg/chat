@@ -22,14 +22,19 @@ const ChatFeed: React.FC<ChatFeedProps> = ({ messages }) => {
         gap: 1,
       }}
     >
-      {messages.map((message) => {
+      {messages.map((message, index) => {
         const isOwnMessage = message.username === currentUser;
+        const previousMessage = index > 0 ? messages[index - 1] : null;
+        const showUsername =
+          !isOwnMessage &&
+          (!previousMessage || previousMessage.username !== message.username);
 
         return (
           <ChatBubble
             key={message.id}
             message={message}
             isOwnMessage={isOwnMessage}
+            showUsername={showUsername}
           />
         );
       })}

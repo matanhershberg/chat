@@ -6,9 +6,14 @@ import type { Message } from "../models/messages";
 interface ChatBubbleProps {
   message: Message;
   isOwnMessage: boolean;
+  showUsername?: boolean;
 }
 
-const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isOwnMessage }) => {
+const ChatBubble: React.FC<ChatBubbleProps> = ({
+  message,
+  isOwnMessage,
+  showUsername = true,
+}) => {
   return (
     <Box
       sx={{
@@ -25,7 +30,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({ message, isOwnMessage }) => {
           alignItems: isOwnMessage ? "flex-end" : "flex-start",
         }}
       >
-        {!isOwnMessage && (
+        {!isOwnMessage && showUsername && (
           <Typography
             variant="caption"
             sx={{
