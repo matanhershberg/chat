@@ -1,14 +1,20 @@
-FROM node:24-alpine
+# Build stage
+FROM node:24-alpine AS builder
 
 WORKDIR /app
-
-COPY . .
-
+COPY package*.json ./
 RUN npm ci
-
+COPY . .
 RUN npm run build
 
-# Need to expose ports to outside connections to be able to connect to the docker instance
-ENV EXPOSE_PORTS=true
+# Production stage
+FROM node:24-alpine AS production
 
-CMD ["npm", "run", "preview"]
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# Copy built app and node_modules
+COPY --from=builder /app/dist ./dist
+
+CMD ["npm", "run", "preview", "--", "--host"]
