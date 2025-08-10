@@ -1,20 +1,19 @@
-# Build stage
-FROM node:24-alpine AS builder
+# Development stage
+FROM node:24-alpine AS development
 
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-RUN npm run build
+EXPOSE 80
+CMD ["npm", "run", "dev", "--", "--host"]
+
+# Pre-production stage
+FROM development AS pre-production
+RUN ["npm", "run", "build"]
 
 # Production stage
-FROM node:24-alpine AS production
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --omit=dev
-
-# Copy built app and node_modules
-COPY --from=builder /app/dist ./dist
-
-CMD ["npm", "run", "preview", "--", "--host"]
+FROM nginx:stable-alpine AS production
+COPY --from=pre-production /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
