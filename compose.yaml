@@ -9,6 +9,8 @@ services:
     volumes:
       - ./backend/src:/app/src
     working_dir: /app
+    # Added custom command to fix issue with nodemon not working correctly on windows under Docker
+    command: npx nodemon --legacy-watch src/index.ts
 
   frontend:
     build:
