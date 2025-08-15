@@ -21,7 +21,10 @@ export default [
     },
     rules: {
       // TypeScript rules
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
       // Node.js rules
       "node/no-unsupported-features/es-syntax": "off",
       // Prettier
