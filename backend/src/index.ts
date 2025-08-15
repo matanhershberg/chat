@@ -1,6 +1,7 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import { handleConnection } from "./ConnectionHandler";
 
 const app = express();
 const httpServer = createServer(app);
@@ -11,20 +12,10 @@ const io = new Server(httpServer, {
   },
 });
 
+handleConnection(io);
+
 app.get("/", (req, res) => {
-  res.send("WebSocket Server Running");
-});
-
-io.on("connection", (socket) => {
-  console.log("A client connected:", socket.id);
-  socket.on("message", (msg) => {
-    console.log("Message received:", msg);
-    io.emit("message", msg);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
-  });
+  res.send("WebSocket Server Running 2");
 });
 
 const port = 3000;
