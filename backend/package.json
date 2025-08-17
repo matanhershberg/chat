@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon src/index.ts",
+    "dev": "concurrently -c \"tsc --watch\" \"nodemon dist/index.js\"",
+    "start": "node dist/index.js",
     "format:check": "prettier --check \"src/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "eslint .",
@@ -24,13 +25,13 @@
     "@types/socket.io": "^3.0.1",
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
+    "concurrently": "^9.2.0",
     "eslint": "^9.33.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^5.5.4",
     "nodemon": "^3.1.10",
     "prettier": "^3.6.2",
     "prettier-plugin-organize-imports": "^4.2.0",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
   }
 }

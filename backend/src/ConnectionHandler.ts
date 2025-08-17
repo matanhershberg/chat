@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import Users from "./Users";
+import Users from "./Users.js";
 
 const users = new Users();
 

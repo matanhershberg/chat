@@ -6,11 +6,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - 3000:3000
-    volumes:
-      - ./backend/src:/app/src
     working_dir: /app
-    # Added custom command to fix issue with nodemon not working correctly on windows under Docker
-    command: npx nodemon --legacy-watch src/index.ts
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/src
+          target: /app/src
 
   frontend:
     build:
@@ -19,6 +20,9 @@ services:
       target: development
     ports:
       - 80:5173
-    volumes:
-      - ./frontend/src:/app/src
     working_dir: /app
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/src
+          target: /app/src

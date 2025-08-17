@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { User } from "./User";
+import { User } from "./User.js";
 
 export default class Users {
   users: User[] = [];
