@@ -15,10 +15,13 @@ const Chat = () => {
     }
 
     websocket.emit({
-      id: crypto.randomUUID(),
-      text: message,
-      username: user.name,
-      timestamp: new Date().toISOString(),
+      type: "chat",
+      payload: {
+        id: crypto.randomUUID(),
+        text: message,
+        username: user.name,
+        timestamp: new Date().toISOString(),
+      },
     });
   };
 

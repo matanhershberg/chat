@@ -10,8 +10,30 @@ export function handleConnection(io: Server) {
     console.log("Users:", users.users.length);
 
     socket.on("message", (msg) => {
-      console.log("Message received:", msg);
-      io.emit("message", msg);
+      if (
+        msg.type === "set-username" &&
+        msg.payload &&
+        typeof msg.payload.username === "string"
+      ) {
+        // Check for duplicate username
+        const isTaken = users.users.some(
+          (user) =>
+            user.name === msg.payload.username && user.socket.id !== socket.id,
+        );
+        if (isTaken) {
+          socket.emit("username-error", { error: "Username already taken" });
+          return;
+        }
+        // Find the user and set their name
+        const user = users.users.find((u) => u.socket.id === socket.id);
+        if (user) {
+          user.name = msg.payload.username;
+          console.log(`Username set for ${socket.id}: ${user.name}`);
+          socket.emit("username-accepted", { username: user.name });
+        }
+      } else if (msg.type === "chat" && msg.payload) {
+        io.emit("message", msg);
+      }
     });
 
     socket.on("disconnect", () => {

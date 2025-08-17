@@ -8,3 +8,7 @@ export interface Message {
 export interface MessageState {
   messages: Message[];
 }
+
+export type OutgoingMessage =
+  | { type: "chat"; payload: Message }
+  | { type: "set-username"; payload: { username: string } };
