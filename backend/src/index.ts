@@ -15,7 +15,7 @@ const io = new Server(httpServer, {
 handleConnection(io);
 
 app.get("/", (req, res) => {
-  res.send("WebSocket Server Running 2");
+  res.send("WebSocket Server Running");
 });
 
 const port = 3000;
