@@ -7,6 +7,7 @@ export default class Users {
   addUser(user: User) {
     this.users.push(user);
     console.log("User added:", user.socket.id);
+    console.log("Users:", this.users.length);
   }
 
   createUser(socket: Socket) {
@@ -18,5 +19,6 @@ export default class Users {
   removeUser(socket: Socket) {
     this.users = this.users.filter((user) => user.socket.id !== socket.id);
     console.log("User removed:", socket.id);
+    console.log("Users:", this.users.length);
   }
 }
