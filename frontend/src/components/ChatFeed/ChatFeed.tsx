@@ -14,8 +14,8 @@ const ChatFeed: React.FC<ChatFeedProps> = ({ messages }) => {
   const currentUser = useSelector((state: RootState) => state.user.name);
   const groupedMessages = groupMessages(messages);
 
-  // Don't render if currentUser is not set
-  if (!currentUser) {
+  // Don't render if currentUser is not set or if there are no messages
+  if (!currentUser || groupedMessages.length === 0) {
     return (
       <ChatFeedContainer>
         <EmptyState />
@@ -25,17 +25,13 @@ const ChatFeed: React.FC<ChatFeedProps> = ({ messages }) => {
 
   return (
     <ChatFeedContainer>
-      {groupedMessages.length === 0 ? (
-        <EmptyState />
-      ) : (
-        groupedMessages.map((messageGroup) => (
-          <MessageGroup
-            key={messageGroup[0].id}
-            messageGroup={messageGroup}
-            currentUser={currentUser}
-          />
-        ))
-      )}
+      {groupedMessages.map((messageGroup) => (
+        <MessageGroup
+          key={messageGroup[0].id}
+          messageGroup={messageGroup}
+          currentUser={currentUser}
+        />
+      ))}
     </ChatFeedContainer>
   );
 };
