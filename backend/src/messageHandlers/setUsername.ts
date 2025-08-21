@@ -1,6 +1,12 @@
 import { Socket } from "socket.io";
 import users from "../UsersService.js";
 
+const isUsernameTaken = (username: string, socketId: string): boolean => {
+  return users.users.some(
+    (user) => user.name === username && user.socket.id !== socketId,
+  );
+};
+
 const onSetUsername = (
   socket: Socket,
   data: { username: string },
@@ -15,15 +21,12 @@ const onSetUsername = (
     return;
   }
 
-  const isTaken = users.users.some(
-    (user) => user.name === data.username && user.socket.id !== socket.id,
-  );
-  if (isTaken) {
+  if (isUsernameTaken(data.username, socket.id)) {
     callback({ success: false, error: "Username already taken" });
     return;
   }
 
-  const user = users.users.find((user) => user.socket.id === socket.id);
+  const user = users.findUserBySocketId(socket.id);
   if (user) {
     user.name = data.username;
     console.log(`Username set for ${socket.id}: ${user.name}`);
