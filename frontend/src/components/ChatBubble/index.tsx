@@ -22,12 +22,23 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
       sx={{
         display: "flex",
         justifyContent: isOwnMessage ? "flex-end" : "flex-start",
-        mb: 1,
+        mb: 2,
+        animation: "fadeInUp 0.3s ease-out",
+        "@keyframes fadeInUp": {
+          "0%": {
+            opacity: 0,
+            transform: "translateY(10px)",
+          },
+          "100%": {
+            opacity: 1,
+            transform: "translateY(0)",
+          },
+        },
       }}
     >
       <Box
         sx={{
-          maxWidth: "70%",
+          maxWidth: "75%",
           display: "flex",
           flexDirection: "column",
           alignItems: isOwnMessage ? "flex-end" : "flex-start",
