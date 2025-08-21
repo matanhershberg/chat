@@ -1,0 +1,23 @@
+import { Paper } from "@mui/material";
+import { styled } from "@mui/material/styles";
+
+const StyledMainChatArea = styled(Paper)({
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  background: "rgba(255, 255, 255, 0.05)",
+  backdropFilter: "blur(20px)",
+  border: "1px solid rgba(255, 255, 255, 0.1)",
+  borderRadius: 24,
+  overflow: "hidden",
+});
+
+interface MainChatAreaProps {
+  children: React.ReactNode;
+}
+
+const MainChatArea: React.FC<MainChatAreaProps> = ({ children }) => {
+  return <StyledMainChatArea elevation={0}>{children}</StyledMainChatArea>;
+};
+
+export default MainChatArea;

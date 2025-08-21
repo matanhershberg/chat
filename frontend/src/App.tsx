@@ -1,6 +1,6 @@
 import { Container } from "@mui/material";
 import AppContainer from "./components/AppContainer";
-import Chat from "./components/Chat";
+import Chat from "./components/Chat/Chat";
 import Header from "./components/Header/Header";
 import UsernameModal from "./components/UsernameModal";
 
@@ -9,9 +9,8 @@ function App() {
     <AppContainer>
       <Container maxWidth="xl" sx={{ position: "relative", zIndex: 1 }}>
         <Header />
-
-        <UsernameModal />
         <Chat />
+        <UsernameModal />
       </Container>
     </AppContainer>
   );
