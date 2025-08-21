@@ -1,11 +1,8 @@
 import { Socket } from "socket.io";
-import BroadcastService from "../BroadcastService.js";
+import broadcastService from "../BroadcastService.js";
 import users from "../UsersService.js";
 
-export default function onDisconnect(
-  socket: Socket,
-  broadcastService: BroadcastService,
-) {
+export default function onDisconnect(socket: Socket) {
   console.log("Client disconnected:", socket.id);
   users.removeUser(socket);
   broadcastService.broadcastOnlineUsers();

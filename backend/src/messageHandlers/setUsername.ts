@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import BroadcastService from "../BroadcastService.js";
+import broadcastService from "../BroadcastService.js";
 import users from "../UsersService.js";
 
 const isUsernameTaken = (username: string, socketId: string): boolean => {
@@ -16,7 +16,6 @@ const onSetUsername = (
     error?: string;
     username?: string;
   }) => void,
-  broadcastService: BroadcastService,
 ) => {
   if (!data || typeof data.username !== "string") {
     callback({ success: false, error: "Invalid username" });
