@@ -14,16 +14,17 @@ export const groupMessages = (messages: Message[]): Message[][] => {
     const currentMessage = messages[i];
     const previousMessage = i > 0 ? messages[i - 1] : null;
 
-    // Start a new group if:
-    // 1. First message
-    // 2. Different user
-    // 3. Different hour:minute
-    if (
-      !previousMessage ||
-      previousMessage.username !== currentMessage.username ||
+    // Define conditions for starting a new group
+    const isFirstMessage = !previousMessage;
+    const isDifferentUser =
+      previousMessage && previousMessage.username !== currentMessage.username;
+    const isDifferentTime =
+      previousMessage &&
       getTimeKey(previousMessage.timestamp) !==
-        getTimeKey(currentMessage.timestamp)
-    ) {
+        getTimeKey(currentMessage.timestamp);
+
+    // Start a new group if any condition is true
+    if (isFirstMessage || isDifferentUser || isDifferentTime) {
       groupedMessages.push([currentMessage]);
     } else {
       // Add to the last group
