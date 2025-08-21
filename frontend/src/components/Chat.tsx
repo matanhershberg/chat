@@ -4,6 +4,7 @@ import { type RootState } from "../store/store";
 import websocket from "../websocket";
 import ChatFeed from "./ChatFeed";
 import MessageInput from "./MessageInput";
+import UsersList from "./UsersList";
 
 const Chat = () => {
   const messages = useSelector((state: RootState) => state.messages.messages);
@@ -26,9 +27,12 @@ const Chat = () => {
   };
 
   return (
-    <Stack direction="column" spacing={2} height="100vh" p={2}>
-      <ChatFeed messages={messages} />
-      <MessageInput onSendMessage={handleSendMessage} />
+    <Stack direction="row" spacing={2} height="100vh" p={2}>
+      <Stack direction="column" spacing={2} flex={1}>
+        <ChatFeed messages={messages} />
+        <MessageInput onSendMessage={handleSendMessage} />
+      </Stack>
+      <UsersList />
     </Stack>
   );
 };

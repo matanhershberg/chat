@@ -2,6 +2,7 @@ import { io, Socket } from "socket.io-client";
 import type { OutgoingMessage } from "../models/messages";
 import { messagesActions } from "../store/messages";
 import store from "../store/store";
+import { setOnlineUsers, type OnlineUser } from "../store/users";
 
 class Websocket {
   private socket: Socket;
@@ -17,6 +18,10 @@ class Websocket {
       if (data.type === "chat" && "payload" in data && data.payload) {
         store.dispatch(messagesActions.addMessage(data.payload));
       }
+    });
+
+    this.socket.on("online-users", (onlineUsers: OnlineUser[]) => {
+      store.dispatch(setOnlineUsers(onlineUsers));
     });
   }
 
