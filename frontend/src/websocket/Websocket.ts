@@ -5,8 +5,6 @@ import store from "../store/store";
 
 class Websocket {
   private socket: Socket;
-  private usernameErrorCallback?: (error: string) => void;
-  private usernameAcceptedCallback?: (username: string) => void;
 
   constructor() {
     this.socket = io("http://localhost:3000");
@@ -20,24 +18,18 @@ class Websocket {
         store.dispatch(messagesActions.addMessage(data.payload));
       }
     });
-    this.socket.on("username-error", (data: { error: string }) => {
-      if (this.usernameErrorCallback) {
-        this.usernameErrorCallback(data.error);
-      }
-    });
-    this.socket.on("username-accepted", (data: { username: string }) => {
-      if (this.usernameAcceptedCallback) {
-        this.usernameAcceptedCallback(data.username);
-      }
-    });
   }
 
-  public onUsernameError(callback: (error: string) => void) {
-    this.usernameErrorCallback = callback;
-  }
-
-  public onUsernameAccepted(callback: (username: string) => void) {
-    this.usernameAcceptedCallback = callback;
+  // setUsername with acknowledgement
+  public setUsername(
+    username: string,
+    callback: (result: {
+      success: boolean;
+      username?: string;
+      error?: string;
+    }) => void,
+  ) {
+    this.socket.emit("set-username", { username }, callback);
   }
 
   public emit(data: OutgoingMessage) {

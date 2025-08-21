@@ -9,29 +9,31 @@ export function handleConnection(io: Server) {
     users.createUser(socket);
     console.log("Users:", users.users.length);
 
+    socket.on("set-username", (data, callback) => {
+      if (!data || typeof data.username !== "string") {
+        callback({ success: false, error: "Invalid username" });
+        return;
+      }
+      const isTaken = users.users.some(
+        (user) => user.name === data.username && user.socket.id !== socket.id,
+      );
+      if (isTaken) {
+        callback({ success: false, error: "Username already taken" });
+        return;
+      }
+      const user = users.users.find((u) => u.socket.id === socket.id);
+      if (user) {
+        user.name = data.username;
+        console.log(`Username set for ${socket.id}: ${user.name}`);
+        callback({ success: true, username: user.name });
+      } else {
+        callback({ success: false, error: "User not found" });
+      }
+    });
+
+    // Only handle chat messages here
     socket.on("message", (msg) => {
-      if (
-        msg.type === "set-username" &&
-        msg.payload &&
-        typeof msg.payload.username === "string"
-      ) {
-        // Check for duplicate username
-        const isTaken = users.users.some(
-          (user) =>
-            user.name === msg.payload.username && user.socket.id !== socket.id,
-        );
-        if (isTaken) {
-          socket.emit("username-error", { error: "Username already taken" });
-          return;
-        }
-        // Find the user and set their name
-        const user = users.users.find((u) => u.socket.id === socket.id);
-        if (user) {
-          user.name = msg.payload.username;
-          console.log(`Username set for ${socket.id}: ${user.name}`);
-          socket.emit("username-accepted", { username: user.name });
-        }
-      } else if (msg.type === "chat" && msg.payload) {
+      if (msg.type === "chat" && msg.payload) {
         io.emit("message", msg);
       }
     });
