@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { type Message } from "../../models/messages";
-import ChatFeed from "../ChatFeed";
+import ChatFeed from "../ChatFeed/ChatFeed";
 import MessageInput from "../MessageInput";
 
 const ContentContainer = styled(Box)({
