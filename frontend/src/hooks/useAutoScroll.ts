@@ -31,7 +31,7 @@ export const useAutoScroll = (
     if (enabled && !isUserScrolling.current && scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [enabled, ...dependencies]);
+  }, [enabled, dependencies]);
 
   // Handle scroll events to detect user scrolling
   const handleScroll = () => {
