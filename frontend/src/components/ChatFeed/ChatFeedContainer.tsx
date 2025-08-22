@@ -1,15 +1,23 @@
 import Box from "@mui/material/Box";
-import type { ReactNode } from "react";
+import React, { type ReactNode } from "react";
+import { useAutoScroll } from "../../hooks/useAutoScroll";
 
 interface ChatFeedContainerProps {
   children: ReactNode;
 }
 
 const ChatFeedContainer: React.FC<ChatFeedContainerProps> = ({ children }) => {
+  const { scrollRef, handleScroll } = useAutoScroll([children], {
+    enabled: true,
+    bottomThreshold: 10,
+  });
+
   return (
     <Box
+      ref={scrollRef}
       flex={1}
       overflow="auto"
+      onScroll={handleScroll}
       sx={{
         p: 3,
         display: "flex",
@@ -18,6 +26,7 @@ const ChatFeedContainer: React.FC<ChatFeedContainerProps> = ({ children }) => {
         background: "transparent", // Make background transparent to match parent
         minHeight: 0, // Ensure proper flexbox behavior
         maxHeight: "100%", // Ensure it doesn't exceed container height
+        scrollBehavior: "smooth", // Smooth scrolling for auto-scroll
         "&::-webkit-scrollbar": {
           width: "8px",
         },
