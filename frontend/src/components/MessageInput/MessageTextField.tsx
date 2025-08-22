@@ -13,8 +13,6 @@ const MessageTextField = ({ value, onChange }: MessageTextFieldProps) => {
       value={value}
       onChange={(e) => onChange(e.target.value)}
       fullWidth
-      multiline
-      maxRows={4}
       sx={{
         "& .MuiOutlinedInput-root": {
           background: "rgba(255, 255, 255, 0.05)",
