@@ -8,11 +8,13 @@ const ContentContainer = styled(Box)({
   flex: 1,
   display: "flex",
   flexDirection: "column",
+  minHeight: 0, // This is crucial for flexbox scrolling
 });
 
 const MessageInputContainer = styled(Box)({
   padding: 24,
   borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+  flexShrink: 0, // Prevent the input from shrinking
 });
 
 interface ChatContentProps {
