@@ -8,6 +8,9 @@ const messagesSlice = createSlice({
     addMessage: (state, action: PayloadAction<Message>) => {
       state.messages.push(action.payload);
     },
+    addMultipleMessages: (state, action: PayloadAction<Message[]>) => {
+      state.messages.push(...action.payload);
+    },
   },
 });
 
