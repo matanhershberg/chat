@@ -41,7 +41,7 @@ const UsersList = () => {
       sx={{
         minWidth: 280,
         height: "fit-content",
-        background: "rgba(255, 255, 255, 0.05)",
+        background: "transparent", // Make background transparent to match parent
         backdropFilter: "blur(20px)",
         border: "1px solid rgba(255, 255, 255, 0.1)",
         borderRadius: 3,

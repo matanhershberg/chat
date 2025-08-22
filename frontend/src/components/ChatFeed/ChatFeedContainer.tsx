@@ -15,7 +15,9 @@ const ChatFeedContainer: React.FC<ChatFeedContainerProps> = ({ children }) => {
         display: "flex",
         flexDirection: "column",
         gap: 2,
-        background: "rgba(255, 255, 255, 0.02)",
+        background: "transparent", // Make background transparent to match parent
+        minHeight: 0, // Ensure proper flexbox behavior
+        maxHeight: "100%", // Ensure it doesn't exceed container height
         "&::-webkit-scrollbar": {
           width: "8px",
         },

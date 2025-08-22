@@ -15,6 +15,7 @@ const MessageInputContainer = styled(Box)({
   padding: 24,
   borderTop: "1px solid rgba(255, 255, 255, 0.1)",
   flexShrink: 0, // Prevent the input from shrinking
+  background: "transparent", // Make background transparent to match parent
 });
 
 interface ChatContentProps {
