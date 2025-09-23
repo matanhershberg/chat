@@ -7,7 +7,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost",
+    origin: "https://chat.matan.app",
     methods: ["GET", "POST"],
   },
 });
@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
   res.send("WebSocket Server Running");
 });
 
-const port = 3000;
+const port = process.env.PORT ?? 3000;
 httpServer.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });

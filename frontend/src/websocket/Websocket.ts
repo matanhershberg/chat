@@ -8,7 +8,7 @@ class Websocket {
   private socket: Socket;
 
   constructor() {
-    this.socket = io("http://localhost:3000");
+    this.socket = io("https://api.chat.matan.app");
     this.addListeners();
   }
 
