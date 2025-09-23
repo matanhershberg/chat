@@ -1,0 +1,24 @@
+{
+  "name": "benchmark",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "concurrently \"npm run dev:tsc\" \"npm run dev:nodemon\"",
+    "dev:tsc": "tsc --watch",
+    "dev:nodemon": "nodemon dist/index.js",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "concurrently": "^9.2.1",
+    "nodemon": "^3.1.10",
+    "typescript": "^5.9.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.2"
+  }
+}
