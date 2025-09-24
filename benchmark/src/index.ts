@@ -55,10 +55,12 @@ class UserSimulator {
   private isConnected: boolean = false;
   private isUsernameSet: boolean = false;
   private messageInterval?: NodeJS.Timeout;
+  private createdAt: number;
 
   constructor(config: BenchmarkConfig) {
     this.config = config;
     this.username = this.generateRandomUsername();
+    this.createdAt = Date.now();
     this.socket = io(config.serverUrl, {
       transports: ["websocket"],
       timeout: 10000,
@@ -115,15 +117,12 @@ class UserSimulator {
   private setupEventListeners(): void {
     this.socket.on("connect", () => {
       this.isConnected = true;
-      console.log(`✅ ${this.username} connected`);
-
       // Set username after connection
       this.setUsername();
     });
 
     this.socket.on("disconnect", (reason: string) => {
       this.isConnected = false;
-      console.log(`❌ ${this.username} disconnected: ${reason}`);
     });
 
     this.socket.on("message", (data: OutgoingMessage) => {
@@ -135,7 +134,7 @@ class UserSimulator {
     });
 
     this.socket.on("connect_error", (error: Error) => {
-      console.error(`❌ ${this.username} connection error:`, error.message);
+      // Connection error - status will be updated by the status line
     });
   }
 
@@ -143,12 +142,9 @@ class UserSimulator {
     this.socket.emit("set-username", { username: this.username }, (response: SetUsernameResponse) => {
       if (response.success) {
         this.isUsernameSet = true;
-        console.log(`👤 ${this.username} username set successfully`);
-
         // Start sending messages after username is set
         this.startSendingMessages();
       } else {
-        console.error(`❌ ${this.username} failed to set username:`, response.error);
         // Try with a different username
         this.username = this.generateRandomUsername();
         setTimeout(() => this.setUsername(), 1000);
@@ -180,12 +176,8 @@ class UserSimulator {
       this.socket.emit("message", message);
       this.messagesSent++;
 
-      console.log(`📤 ${this.username} sent message ${this.messagesSent}/${this.config.messagesPerUser}`);
-
       if (this.messagesSent < this.config.messagesPerUser) {
         this.messageInterval = setTimeout(sendNextMessage, this.config.messageIntervalMs);
-      } else {
-        console.log(`✅ ${this.username} finished sending all messages`);
       }
     };
 
@@ -207,6 +199,7 @@ class UserSimulator {
       messagesReceived: this.messagesReceived,
       isConnected: this.isConnected,
       isUsernameSet: this.isUsernameSet,
+      createdAt: this.createdAt,
     };
   }
 }
@@ -216,6 +209,7 @@ class BenchmarkRunner {
   private config: BenchmarkConfig;
   private users: UserSimulator[] = [];
   private stats: BenchmarkStats;
+  private statusInterval?: NodeJS.Timeout;
 
   constructor(config: BenchmarkConfig) {
     this.config = config;
@@ -240,6 +234,9 @@ class BenchmarkRunner {
     console.log(`   Connection delay: ${this.config.connectionDelayMs}ms`);
     console.log("");
 
+    // Start status updates immediately
+    this.startStatusUpdates();
+
     // Create users with staggered connections
     for (let i = 0; i < this.config.userCount; i++) {
       this.stats.connectionsAttempted++;
@@ -252,23 +249,26 @@ class BenchmarkRunner {
         if (i < this.config.userCount - 1) {
           await this.delay(this.config.connectionDelayMs);
         }
+
+        // Small delay to make status updates visible
+        await this.delay(50);
       } catch (error) {
         this.stats.connectionsFailed++;
         console.error(`❌ Failed to create user ${i + 1}:`, error);
       }
     }
 
-    console.log(`\n📈 All ${this.config.userCount} users created. Waiting for connections to establish...`);
+    // Don't log here - it breaks the status line
 
     // Wait for connections to establish first
     await this.waitForConnections();
 
-    console.log(`\n📈 Connections established. Waiting for benchmark to complete...`);
-
     // Wait for all messages to be sent
     await this.waitForCompletion();
 
-    // Calculate final stats
+    // Show final status and stop updates
+    this.updateStatus();
+    this.stopStatusUpdates();
     this.calculateFinalStats();
     this.printResults();
   }
@@ -284,7 +284,6 @@ class BenchmarkRunner {
 
         // Check if we've exceeded the maximum wait time
         if (elapsed > maxWaitTime) {
-          console.log(`⏰ Connection timeout after ${elapsed / 1000}s. Proceeding with current connections...`);
           resolve();
           return;
         }
@@ -318,7 +317,6 @@ class BenchmarkRunner {
 
         // Check if we've exceeded the maximum wait time
         if (elapsed > maxWaitTime) {
-          console.log(`⏰ Benchmark timeout after ${elapsed / 1000}s. Stopping...`);
           resolve();
           return;
         }
@@ -400,6 +398,47 @@ class BenchmarkRunner {
 
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  private updateStatus(): void {
+    const now = Date.now();
+    const connectionTimeout = 3000; // 3 seconds to connect
+
+    const connectedUsers = this.users.filter((user) => user.getStats().isConnected).length;
+    const failedUsers = this.users.filter((user) => {
+      const userStats = user.getStats();
+      // Only count as failed if not connected AND enough time has passed
+      return !userStats.isConnected && now - userStats.createdAt > connectionTimeout;
+    }).length;
+
+    const totalMessagesSent = this.users.reduce((sum, user) => sum + user.getStats().messagesSent, 0);
+    const totalMessagesReceived = this.users.reduce((sum, user) => sum + user.getStats().messagesReceived, 0);
+    const usernamesSet = this.users.filter((user) => user.getStats().isUsernameSet).length;
+
+    const statusParts = [
+      `${connectedUsers}/${this.config.userCount} connected`,
+      failedUsers > 0 ? `${failedUsers} failed` : null,
+      `${usernamesSet} usernames set`,
+      `${totalMessagesSent} sent`,
+      `${totalMessagesReceived} received`,
+    ].filter(Boolean);
+
+    process.stdout.write(`\r📊 Status: ${statusParts.join(" | ")}                    `);
+  }
+
+  private startStatusUpdates(): void {
+    this.statusInterval = setInterval(() => {
+      this.updateStatus();
+    }, 100); // Update every 100ms for very responsive updates
+  }
+
+  private stopStatusUpdates(): void {
+    if (this.statusInterval) {
+      clearInterval(this.statusInterval);
+      this.statusInterval = undefined;
+    }
+    // Clear the status line and add a newline
+    process.stdout.write("\r" + " ".repeat(100) + "\r\n");
   }
 }
 
