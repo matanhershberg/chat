@@ -107,6 +107,7 @@ const UsernameModal: React.FC = () => {
               placeholder="Enter your username"
               value={usernameInput}
               onChange={(e) => setUsernameInput(e.target.value)}
+              autoComplete="username"
               style={{
                 width: "100%",
                 padding: "16px 20px",
