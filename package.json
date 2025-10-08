@@ -10,9 +10,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "eslint": "^9.30.0",
+    "eslint": "^9.37.0",
     "husky": "^9.1.7",
-    "lint-staged": "^16.1.2",
+    "lint-staged": "^16.2.3",
     "prettier": "^3.6.2"
   }
 }
