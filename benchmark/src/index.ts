@@ -419,8 +419,8 @@ class BenchmarkRunner {
       `${connectedUsers}/${this.config.userCount} connected`,
       failedUsers > 0 ? `${failedUsers} failed` : null,
       `${usernamesSet} usernames set`,
-      `${totalMessagesSent} sent`,
-      `${totalMessagesReceived} received`,
+      `${totalMessagesSent.toLocaleString()} sent`,
+      `${totalMessagesReceived.toLocaleString()} received`,
     ].filter(Boolean);
 
     process.stdout.write(`\r📊 Status: ${statusParts.join(" | ")}                    `);
