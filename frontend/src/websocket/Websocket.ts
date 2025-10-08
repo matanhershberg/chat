@@ -8,7 +8,10 @@ class Websocket {
   private socket: Socket;
 
   constructor() {
-    this.socket = io("https://api.chat.matan.app");
+    const socketUrl = import.meta.env.DEV
+      ? "http://localhost:3000"
+      : "https://api.chat.matan.app";
+    this.socket = io(socketUrl);
     this.addListeners();
   }
 

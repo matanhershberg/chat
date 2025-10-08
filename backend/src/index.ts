@@ -5,9 +5,15 @@ import { handleConnection } from "./ConnectionHandler.js";
 
 const app = express();
 const httpServer = createServer(app);
+
+const corsOrigin =
+  process.env.NODE_ENV === "production"
+    ? "https://chat.matan.app"
+    : "http://localhost";
+
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://chat.matan.app",
+    origin: corsOrigin,
     methods: ["GET", "POST"],
   },
 });
