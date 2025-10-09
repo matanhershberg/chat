@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import * as readline from "readline";
 
 // Configuration interface
 interface BenchmarkConfig {
@@ -41,6 +42,7 @@ interface BenchmarkStats {
   usernamesSet: number;
   messagesSent: number;
   messagesReceived: number;
+  expectedMessagesReceived: number;
   startTime: number;
   endTime?: number;
 }
@@ -56,11 +58,13 @@ class UserSimulator {
   private isUsernameSet: boolean = false;
   private messageInterval?: NodeJS.Timeout;
   private createdAt: number;
+  private onMessageSent?: () => void;
 
-  constructor(config: BenchmarkConfig) {
+  constructor(config: BenchmarkConfig, onMessageSent?: () => void) {
     this.config = config;
     this.username = this.generateRandomUsername();
     this.createdAt = Date.now();
+    this.onMessageSent = onMessageSent;
     this.socket = io(config.serverUrl, {
       transports: ["websocket"],
       timeout: 10000,
@@ -175,6 +179,9 @@ class UserSimulator {
 
       this.socket.emit("message", message);
       this.messagesSent++;
+      if (this.onMessageSent) {
+        this.onMessageSent();
+      }
 
       if (this.messagesSent < this.config.messagesPerUser) {
         this.messageInterval = setTimeout(sendNextMessage, this.config.messageIntervalMs);
@@ -220,6 +227,7 @@ class BenchmarkRunner {
       usernamesSet: 0,
       messagesSent: 0,
       messagesReceived: 0,
+      expectedMessagesReceived: 0,
       startTime: Date.now(),
     };
   }
@@ -242,7 +250,7 @@ class BenchmarkRunner {
       this.stats.connectionsAttempted++;
 
       try {
-        const user = new UserSimulator(this.config);
+        const user = new UserSimulator(this.config, () => this.handleMessageSent());
         this.users.push(user);
 
         // Stagger connections to avoid overwhelming the server
@@ -379,7 +387,7 @@ class BenchmarkRunner {
 
     console.log(`👤 Usernames set: ${this.stats.usernamesSet}`);
     console.log(`📤 Messages sent: ${this.stats.messagesSent}`);
-    console.log(`📥 Messages received: ${this.stats.messagesReceived}`);
+    console.log(`📥 Messages received: ${this.stats.messagesReceived} / ${this.stats.expectedMessagesReceived}`);
     console.log(`⚡ Messages per second: ${messagesPerSecond.toFixed(2)}`);
 
     if (this.stats.connectionsSuccessful > 0) {
@@ -394,6 +402,11 @@ class BenchmarkRunner {
 
     // Disconnect all users
     this.users.forEach((user) => user.disconnect());
+  }
+
+  private handleMessageSent(): void {
+    const connectedUsers = this.users.filter((u) => u.getStats().isConnected).length;
+    this.stats.expectedMessagesReceived += connectedUsers;
   }
 
   private delay(ms: number): Promise<void> {
@@ -420,10 +433,19 @@ class BenchmarkRunner {
       failedUsers > 0 ? `${failedUsers} failed` : null,
       `${usernamesSet} usernames set`,
       `${totalMessagesSent.toLocaleString()} sent`,
-      `${totalMessagesReceived.toLocaleString()} received`,
-    ].filter(Boolean);
+      `${totalMessagesReceived.toLocaleString()} / ${this.stats.expectedMessagesReceived.toLocaleString()} received`,
+    ].filter(Boolean) as string[];
 
-    process.stdout.write(`\r📊 Status: ${statusParts.join(" | ")}                    `);
+    // Compose the line and ensure it won't wrap across terminal width
+    const columns = process.stdout.columns ?? 80;
+    const rawLine = `Status: ${statusParts.join(" | ")}`; // avoid emoji width issues on Windows
+    const maxLen = Math.max(0, columns - 1); // keep within one line
+    const line = rawLine.length > maxLen ? `${rawLine.slice(0, Math.max(0, maxLen - 1))}…` : rawLine;
+
+    // Clear current line and rewrite from column 0
+    readline.clearLine(process.stdout, 0);
+    readline.cursorTo(process.stdout, 0);
+    process.stdout.write(line);
   }
 
   private startStatusUpdates(): void {
@@ -437,8 +459,10 @@ class BenchmarkRunner {
       clearInterval(this.statusInterval);
       this.statusInterval = undefined;
     }
-    // Clear the status line and add a newline
-    process.stdout.write("\r" + " ".repeat(100) + "\r\n");
+    // Clear the status line and add a newline cleanly
+    readline.clearLine(process.stdout, 0);
+    readline.cursorTo(process.stdout, 0);
+    process.stdout.write("\n");
   }
 }
 
