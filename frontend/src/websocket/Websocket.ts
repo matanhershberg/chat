@@ -2,7 +2,12 @@ import { io, Socket } from "socket.io-client";
 import type { OutgoingMessage } from "../models/messages";
 import { messagesActions } from "../store/messages";
 import store from "../store/store";
-import { setOnlineUsers, type OnlineUser } from "../store/users";
+import {
+  addOnlineUser,
+  removeOnlineUser,
+  setOnlineUsers,
+  type OnlineUser,
+} from "../store/users";
 
 class Websocket {
   private socket: Socket;
@@ -25,6 +30,14 @@ class Websocket {
 
     this.socket.on("online-users", (onlineUsers: OnlineUser[]) => {
       store.dispatch(setOnlineUsers(onlineUsers));
+    });
+
+    this.socket.on("user-connected", (user: OnlineUser) => {
+      store.dispatch(addOnlineUser(user));
+    });
+
+    this.socket.on("user-disconnected", (data: { id: string }) => {
+      store.dispatch(removeOnlineUser(data));
     });
   }
 

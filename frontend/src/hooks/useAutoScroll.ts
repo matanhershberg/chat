@@ -53,6 +53,5 @@ export const useAutoScroll = (
   return {
     scrollRef,
     handleScroll,
-    isUserScrolling: isUserScrolling.current,
   };
 };

@@ -4,7 +4,7 @@ import users from "../UsersService.js";
 
 export default function onConnect(socket: Socket) {
   console.log("A client connected:", socket.id);
-  users.createUser(socket);
+  const user = users.createUser(socket);
 
-  broadcastService.broadcastOnlineUsers();
+  broadcastService.sendOnlineUsersToSocket(user);
 }

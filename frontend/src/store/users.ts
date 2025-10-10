@@ -21,8 +21,23 @@ const usersSlice = createSlice({
     setOnlineUsers: (state, action: PayloadAction<OnlineUser[]>) => {
       state.onlineUsers = action.payload;
     },
+    addOnlineUser: (state, action: PayloadAction<OnlineUser>) => {
+      const exists = state.onlineUsers.some(
+        (user) => user.id === action.payload.id,
+      );
+
+      if (!exists) {
+        state.onlineUsers.push(action.payload);
+      }
+    },
+    removeOnlineUser: (state, action: PayloadAction<{ id: string }>) => {
+      state.onlineUsers = state.onlineUsers.filter(
+        (user) => user.id !== action.payload.id,
+      );
+    },
   },
 });
 
-export const { setOnlineUsers } = usersSlice.actions;
+export const { setOnlineUsers, addOnlineUser, removeOnlineUser } =
+  usersSlice.actions;
 export default usersSlice;

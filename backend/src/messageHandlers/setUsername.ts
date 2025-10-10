@@ -32,7 +32,7 @@ const onSetUsername = (
     user.name = data.username;
     console.log(`Username set for ${socket.id}: ${user.name}`);
     callback({ success: true, username: user.name });
-    broadcastService.broadcastOnlineUsers();
+    broadcastService.broadcastUserConnected(user);
   } else {
     callback({ success: false, error: "User not found" });
   }
