@@ -1,4 +1,5 @@
 import { Socket } from "socket.io";
+import logger from "./logger.js";
 import { User } from "./User.js";
 
 export default class Users {
@@ -6,8 +7,8 @@ export default class Users {
 
   private addUser(user: User) {
     this.users.push(user);
-    console.log("User added:", user.socket.id);
-    console.log("Users:", this.users.length);
+    logger.trace({ socketId: user.socket.id }, "User added");
+    logger.trace({ usersCount: this.users.length }, "Users count");
   }
 
   createUser(socket: Socket) {
@@ -22,7 +23,7 @@ export default class Users {
 
   removeUser(socket: Socket) {
     this.users = this.users.filter((user) => user.socket.id !== socket.id);
-    console.log("User removed:", socket.id);
-    console.log("Users:", this.users.length);
+    logger.trace({ socketId: socket.id }, "User removed");
+    logger.trace({ usersCount: this.users.length }, "Users count");
   }
 }

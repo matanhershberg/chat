@@ -1,3 +1,4 @@
+import logger from "./logger.js";
 import { User } from "./User.js";
 import users from "./UsersService.js";
 
@@ -10,7 +11,7 @@ export default class Broadcast {
 
   broadcastOnlineUsers() {
     if (!this.io) {
-      console.warn("Broadcast: io not set, cannot broadcast");
+      logger.warn("Broadcast: io not set, cannot broadcast");
       return;
     }
 
@@ -36,7 +37,7 @@ export default class Broadcast {
 
   broadcastUserConnected(user: User) {
     if (!this.io) {
-      console.warn("Broadcast: io not set, cannot broadcast");
+      logger.warn("Broadcast: io not set, cannot broadcast");
       return;
     }
 
@@ -51,7 +52,7 @@ export default class Broadcast {
 
   broadcastUserDisconnected(user: User) {
     if (!this.io) {
-      console.warn("Broadcast: io not set, cannot broadcast");
+      logger.warn("Broadcast: io not set, cannot broadcast");
       return;
     }
 

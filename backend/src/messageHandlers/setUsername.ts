@@ -1,5 +1,6 @@
 import { Socket } from "socket.io";
 import broadcastService from "../BroadcastService.js";
+import logger from "../logger.js";
 import users from "../UsersService.js";
 
 const isUsernameTaken = (username: string, socketId: string): boolean => {
@@ -30,7 +31,7 @@ const onSetUsername = (
   const user = users.findUserBySocketId(socket.id);
   if (user) {
     user.name = data.username;
-    console.log(`Username set for ${socket.id}: ${user.name}`);
+    logger.trace({ socketId: socket.id, username: user.name }, "Username set");
     callback({ success: true, username: user.name });
     broadcastService.broadcastUserConnected(user);
   } else {
