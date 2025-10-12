@@ -45,6 +45,11 @@ NODE_ENV=production npm start
 - **Default**: `3000`
 - **Description**: Port number the server will listen on.
 
+### `REDIS_URL`
+
+- **Default**: `redis://localhost:6379`
+- **Description**: Redis connection URL for the Socket.IO adapter. Required for horizontal scaling with multiple backend instances.
+
 ## Development
 
 ```bash
@@ -69,3 +74,23 @@ The backend uses [Pino](https://getpino.io/) for structured logging:
 - **Production**: JSON-formatted logs for log aggregation systems
 
 All log entries include structured data for better filtering and searching.
+
+## Horizontal Scaling
+
+The backend supports horizontal scaling using Redis as a message broker. Multiple backend instances can run simultaneously, with Socket.IO events synchronized across all instances via the Redis adapter.
+
+### Dependencies
+
+- `@socket.io/redis-adapter`: Enables Socket.IO to work across multiple server instances
+- `redis`: Redis client for Node.js
+
+### Architecture
+
+When multiple backend instances run:
+
+1. Each instance connects to the same Redis server as pub/sub client
+2. Socket.IO broadcasts are published to Redis
+3. All instances receive and emit events to their connected clients
+4. Clients maintain consistent state regardless of which instance they're connected to
+
+See the main [SCALING.md](../SCALING.md) for usage instructions.

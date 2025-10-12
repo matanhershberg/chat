@@ -1,17 +1,42 @@
 name: chat
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    ports:
-      - 3000:3000
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - LOG_LEVEL=trace # Add this line
+
     working_dir: /app
+    depends_on:
+      redis:
+        condition: service_healthy
     develop:
       watch:
         - action: sync
           path: ./backend/src
           target: /app/src
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - 3000:3000
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+    restart: always
 
   frontend:
     build:

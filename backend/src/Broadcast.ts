@@ -1,6 +1,5 @@
 import logger from "./logger.js";
 import { User } from "./User.js";
-import users from "./UsersService.js";
 
 export default class Broadcast {
   private io: any;
@@ -9,27 +8,37 @@ export default class Broadcast {
     this.io = io;
   }
 
-  broadcastOnlineUsers() {
+  async broadcastOnlineUsers() {
     if (!this.io) {
       logger.warn("Broadcast: io not set, cannot broadcast");
       return;
     }
 
-    const onlineUsers = users.users
-      .filter((user) => user.name)
-      .map((user) => ({
-        id: user.socket.id,
-        name: user.name!,
+    // Fetch all sockets across all backend instances using fetchSockets()
+    const sockets = await this.io.fetchSockets();
+    const onlineUsers = sockets
+      .filter((socket: any) => socket.data.username)
+      .map((socket: any) => ({
+        id: socket.id,
+        name: socket.data.username,
       }));
+
     this.io.emit("online-users", onlineUsers);
   }
 
-  sendOnlineUsersToSocket(user: User) {
-    const onlineUsers = users.users
-      .filter((user) => user.name)
-      .map((user) => ({
-        id: user.socket.id,
-        name: user.name!,
+  async sendOnlineUsersToSocket(user: User) {
+    if (!this.io) {
+      logger.warn("Broadcast: io not set, cannot send online users");
+      return;
+    }
+
+    // Fetch all sockets across all backend instances using fetchSockets()
+    const sockets = await this.io.fetchSockets();
+    const onlineUsers = sockets
+      .filter((socket: any) => socket.data.username)
+      .map((socket: any) => ({
+        id: socket.id,
+        name: socket.data.username,
       }));
 
     user.socket.emit("online-users", onlineUsers);

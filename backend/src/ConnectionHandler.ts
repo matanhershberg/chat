@@ -13,7 +13,7 @@ export function handleConnection(io: Server) {
     onConnect(socket);
 
     socket.on("set-username", (data, callback) =>
-      onSetUsername(socket, data, callback),
+      onSetUsername(socket, io, data, callback),
     );
 
     socket.on("message", (msg) => {

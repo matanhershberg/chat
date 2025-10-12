@@ -65,7 +65,11 @@ class UserSimulator {
     this.username = this.generateRandomUsername();
     this.createdAt = Date.now();
     this.onMessageSent = onMessageSent;
+
     this.socket = io(config.serverUrl, {
+      query: {
+        frontendId: `benchmark-${Date.now()}-${Math.random().toString(36).substring(7)}`,
+      },
       transports: ["websocket"],
       timeout: 10000,
     });

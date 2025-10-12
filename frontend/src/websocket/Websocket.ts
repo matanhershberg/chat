@@ -16,7 +16,12 @@ class Websocket {
     const socketUrl = import.meta.env.DEV
       ? "http://localhost:3000"
       : "https://api.chat.matan.app";
-    this.socket = io(socketUrl);
+
+    this.socket = io(socketUrl, {
+      query: {
+        frontendId: crypto.randomUUID(),
+      },
+    });
     this.addListeners();
   }
 
