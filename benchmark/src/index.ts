@@ -142,7 +142,13 @@ class UserSimulator {
     });
 
     this.socket.on("connect_error", (error: Error) => {
-      // Connection error - status will be updated by the status line
+      // Connection error - set connected to false
+      this.isConnected = false;
+    });
+
+    this.socket.on("connect_timeout", () => {
+      // Connection timeout - set connected to false
+      this.isConnected = false;
     });
   }
 
@@ -200,6 +206,7 @@ class UserSimulator {
     if (this.messageInterval) {
       clearTimeout(this.messageInterval);
     }
+    this.isConnected = false;
     this.socket.disconnect();
   }
 
@@ -221,6 +228,7 @@ class BenchmarkRunner {
   private users: UserSimulator[] = [];
   private stats: BenchmarkStats;
   private statusInterval?: NodeJS.Timeout;
+  private totalUsersCreated: number = 0;
 
   constructor(config: BenchmarkConfig) {
     this.config = config;
@@ -256,6 +264,7 @@ class BenchmarkRunner {
       try {
         const user = new UserSimulator(this.config, () => this.handleMessageSent());
         this.users.push(user);
+        this.totalUsersCreated++;
 
         // Stagger connections to avoid overwhelming the server
         if (i < this.config.userCount - 1) {
@@ -433,7 +442,7 @@ class BenchmarkRunner {
     const usernamesSet = this.users.filter((user) => user.getStats().isUsernameSet).length;
 
     const statusParts = [
-      `${connectedUsers}/${this.config.userCount} connected`,
+      `${connectedUsers}/${this.totalUsersCreated}/${this.config.userCount}`,
       failedUsers > 0 ? `${failedUsers} failed` : null,
       `${usernamesSet} usernames set`,
       `${totalMessagesSent.toLocaleString()} sent`,
