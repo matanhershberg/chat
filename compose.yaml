@@ -16,7 +16,7 @@ services:
       dockerfile: Dockerfile
     environment:
       - REDIS_URL=redis://redis:6379
-      - LOG_LEVEL=trace # Add this line
+      - LOG_LEVEL=warn
 
     working_dir: /app
     depends_on:
